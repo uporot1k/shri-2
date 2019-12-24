@@ -1,0 +1,17 @@
+{
+  "name": "shri-2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "parcel test/index.html"
+  },
+  "author": "Popov Egor",
+  "license": "ISC",
+  "dependencies": {
+    "parcel-bundler": "^1.12.4"
+  },
+  "devDependencies": {
+    "json-to-ast": "^2.1.0"
+  }
+}
