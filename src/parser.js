@@ -1,7 +1,7 @@
-import parse from 'json-to-ast';
+import { parse } from '@babel/parser';
 
 function parser(input) {
-  return parse(input);
+  return parse(JSON.parse(input));
 }
 
 export default parser;
