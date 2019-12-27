@@ -1,4 +1,4 @@
-import { parse } from '@babel/parser';
+import parse from 'json-to-ast';
 
 function parser(input) {
   return parse(input, {

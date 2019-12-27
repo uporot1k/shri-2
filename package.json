@@ -11,6 +11,9 @@
   "dependencies": {
     "@babel/parser": "^7.7.7",
     "@babel/traverse": "^7.7.4",
+    "acorn": "^7.1.0",
+    "estraverse": "^4.3.0",
+    "estree-walker": "^1.0.0",
     "parcel-bundler": "^1.12.4"
   },
   "devDependencies": {
