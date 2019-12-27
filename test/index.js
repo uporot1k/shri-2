@@ -29,7 +29,7 @@ const testJSON = `{
               }
           ]
       }
-  ]
+  ],
   "content": [
       {
           "block": "grid",
