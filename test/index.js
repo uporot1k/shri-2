@@ -1,4 +1,4 @@
-import lint from '../src/linter';
+import lint from "../src/linter";
 const testJSON = `{
   "block": "grid",
   "mods": {
@@ -29,7 +29,7 @@ const testJSON = `{
               }
           ]
       }
-  ]
+  ],
   "content": [
       {
           "block": "grid",
@@ -58,6 +58,6 @@ const testJSON = `{
   ]
 }`;
 
-const report = lint(JSON.stringify(testJSON));
+const report = lint(testJSON);
 
 console.log(report);
