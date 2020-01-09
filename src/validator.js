@@ -1,3 +1,6 @@
+var walk = require( 'estree-walker' ).walk;
+
+
 import Reporter from './reporter';
 import RuleTester from './rule-tester/RuleTester';
 
@@ -26,7 +29,23 @@ class Validator extends Reporter {
     this.ruleTester = new RuleTester();
   }
   run() {
+    console.log(this.ast);
+    walk(this.ast, {
+      enter: this.onEnter.bind(this)
+    })
+  }
+  onEnter(node, parent, prop, index) {
+    const rules = this.rules;
+    rules.forEach(rule => {
+      if (prop === 'children') {
+        let ruleCheckResult = rule.check(node, parent, prop);
 
+        if (typeof ruleCheckResult === 'object') {
+          this.commitError(ruleCheckResult);
+        }
+      }
+    })
+    // debugger
   }
 }
 

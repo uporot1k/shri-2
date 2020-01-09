@@ -2,6 +2,7 @@ import Rule from '../rule-tester/Rule';
 
 function triggerFn() {
 
+  return false;
 }
 
 function lintFn() {

@@ -1,60 +1,30 @@
 import lint from "../src/linter";
 const testJSON = `{
-  "block": "grid",
-  "mods": {
-      "m-columns": "10"
-  },
+  "block": "page",
   "content": [
-      {
-          "block": "grid",
-          "elem": "fraction",
-          "elemMods": {
-              "m-col": "8"
-          },
+    {
+      "block": "warning",
+      "content": [
+        {
+          "block": "text",
+          "mods": { "size": "l" },
           "content": [
-              {
-                  "block": "payment"
-              }
+            {
+              "block": "text",
+              "mods": { "size": "m" }
+            }
           ]
-      },
-      {
-          "block": "grid",
-          "elem": "fraction",
-          "elemMods": {
-              "m-col": "2"
-          },
-          "content": [
-              {
-                  "block": "offer"
-              }
-          ]
-      }
-  ],
-  "content": [
-      {
-          "block": "grid",
-          "elem": "fraction",
-          "elemMods": {
-              "m-col": "2"
-          },
-          "content": [
-              {
-                  "block": "payment"
-              }
-          ]
-      },
-      {
-          "block": "grid",
-          "elem": "fraction",
-          "elemMods": {
-              "m-col": "8"
-          },
-          "content": [
-              {
-                  "block": "offer"
-              }
-          ]
-      }
+        },
+        {
+          "block": "button",
+          "mods": { "size": "l" }
+        },
+        {
+          "block": "text",
+          "mods": { "size": "l" }
+        }
+      ]
+    } 
   ]
 }`;
 

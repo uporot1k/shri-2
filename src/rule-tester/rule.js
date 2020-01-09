@@ -5,13 +5,20 @@ class Rule {
     this.trigger = args.triggerFn;
     this.checkError = args.lintFn;
   }
-  check() {
-    if (this.trigger()) {
-      this.checkError() ? { code: this.code, error: this.error } : false;
+  check(node, parent, prop, index) {
+
+    if (this.trigger(node, parent, prop)) {
+      const errorLoc = this.checkError(parent);
+
+      if (errorLoc) {
+        // debugger
+        return { code: this.code, error: this.error, location: errorLoc };
+      }
     }
 
-    return false;
+    return true;
   }
+
 }
 
 export default Rule;
