@@ -39,8 +39,9 @@ class Validator extends Reporter {
     rules.forEach(rule => {
       if (prop === 'children') {
         let ruleCheckResult = rule.check(node, parent, prop);
-
+        
         if (typeof ruleCheckResult === 'object') {
+          debugger
           this.commitError(ruleCheckResult);
         }
       }

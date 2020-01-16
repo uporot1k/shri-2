@@ -1,68 +1,88 @@
-import Rule from '../rule-tester/Rule';
-var walk = require( 'estree-walker' ).walk;
-import { getContentBlock } from '../utils';
-import { getModValueByType } from '../utils';
+import Rule from "../rule-tester/Rule";
+var walk = require("estree-walker").walk;
+import { getContentBlock } from "../utils";
+import { getModValueByType } from "../utils";
 
 function triggerFn(node, parent, prop) {
+  let obj = {
+    parent: null,
+    textBlock: null,
+    buttons: []
+  };
   if (!node.children) {
-    if ((node.key.value === "block" && node.value.value === "warning")) {
-      const { children } = parent;
-      const contentBlock = getContentBlock(children);
-      const contentBlockChildren = contentBlock.children;
-      const textBlockIndex = contentBlockChildren.findIndex((child) => child.children[0].value.value === 'button');
+    if (node.key.value === "block" && node.value.value === "warning") {
+      obj.parent = parent;
 
-      if (textBlockIndex >= 0) {
-        return parent;
-      }
+      walk(parent, {
+        enter: function(n, p, pr) {
+
+            console.log(n, pr)
+            if (n.type === "Property" && n.key.value === "block" && n.value.value === "button") {
+              
+              obj.buttons.push(p);
+            }
+            if (n.type === "Property" && n.key.value === "block" && n.value.value === "text") {
+              if(!obj.textBlock) {
+                obj.textBlock = p;
+              }
+              
+            }
+        }
+      });
     }
   }
-  
+
+  if (obj.textBlock) {
+    return obj;
+  }
+
   return false;
 }
 
-function lintFn(block, parent) {
-  const getSizeReference = (block) => {
+function lintFn(obj) {
+  const { parent, textBlock, buttons } = obj;
+  
+  const getSizeReference = block => {
     let size = null;
 
-    walk(block, {
-      enter: function(node, parent, prop) {
-        if (node.type === "Property" && node.value.value === "text") {
-          if (!size) {
-            size = getModValueByType(parent, "size");
-          }
-        }
-      }
-    })
+    if (!size) {
+      size = getModValueByType(block, "size");
+    }
 
     return size;
-  }
-  let error = null;
-  const SizesMap = ['s', 'm', 'l', 'xl', 'xxl'];
-
-  const sizeReference = getSizeReference(block);
-
- 
-  walk(block, {
-    enter: function(node, parent, prop) {
-      if (node.type === "Property" && node.value.value === "button") {
-        if (!error) {
-          let nodeModValue = getModValueByType(parent, "size");
-          let sizeIndex = SizesMap.findIndex(size => size === nodeModValue);
-          let sizeReferenceIndex = SizesMap.findIndex(size => size === sizeReference);
+  };
   
-          if ((sizeIndex - 1) !== sizeReferenceIndex) {
-            error = true;
+  let error = [];
+
+  const SizesMap = ["s", "m", "l", "xl", "xxl"];
+
+  const sizeReference = getSizeReference(textBlock);
+  buttons.forEach(el => {
+    walk(el, {
+      enter: function(node, parent, prop) {
+        if (node.type === "Property" && node.value.value === "button") {
+          if (!error) {
+            let nodeModValue = getModValueByType(parent, "size");
+            let sizeIndex = SizesMap.findIndex(size => size === nodeModValue);
+            let sizeReferenceIndex = SizesMap.findIndex(
+              size => size === sizeReference
+            );
+  
+            if (sizeIndex - 1 !== sizeReferenceIndex) {
+              error.push(block.loc);
+            }
           }
         }
       }
-    }
-  })
+    });
+  });
 
-  if (error) {
+
+  if (error.length > 0) {
     return block.loc;
   }
 
-  return false
+  return false;
 }
 
 const ruleConfig = {
@@ -70,7 +90,7 @@ const ruleConfig = {
   error: "Размер кнопки блока warning должен быть на 1 шаг больше эталонного",
   triggerFn,
   lintFn
-}
+};
 
 const rule = new Rule(ruleConfig);
 

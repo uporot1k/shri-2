@@ -20,7 +20,7 @@ const testJSON = `{
           "mods": { "size": "l" }
         },
         {
-          "block": "text",
+          "block": "button",
           "mods": { "size": "l" }
         }
       ]
