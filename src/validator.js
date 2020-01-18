@@ -32,6 +32,7 @@ class Validator extends Reporter {
   onEnter(node, parent, prop, index) {
     const rules = this.rules;
     rules.forEach(rule => {
+      
       rule.check({node, parent, prop}, this.commitError.bind(this));
     })
   }

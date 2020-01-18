@@ -29,16 +29,19 @@ function chechStructure(arr) {
     item.f({
       code: item.rule.code,
       error: item.rule.errorCode,
-      start: {
-        line: item.start.line,
-        column: item.start.column
+      location: {
+        start: {
+          line: item.loc.start.line,
+          column: item.loc.start.column
+        },
+        end: {
+          line: item.loc.end.line,
+          column: item.loc.end.column
+        },
       },
-      end: {
-        line: item.end.line,
-        column: item.end.column
-      }
     });
   };
+  // debugger
   let map = [...arr];
 
   arr.forEach((item, index) => {
@@ -52,16 +55,23 @@ function chechStructure(arr) {
       }
     }
     if (item.titleType === "h2") {
-      let idx = map.findIndex(el => el.titleType === "h1");
-      if (index < idx && !item.isEmitted) {
+      const checker = (arr) => {
+        return arr.some((el, i) => el.titleType === "h1" && index < i);
+      }
+
+      if (checker(map) && !item.isEmitted) {
         fireEvent(item);
 
         map[index].isEmitted = true;
       }
     }
     if (item.titleType === "h3") {
-      let idx = map.findIndex(el => el.titleType === "h2");
-      if (index < idx && !item.isEmitted) {
+      // debugger
+      const checker = (arr) => {
+        return arr.some((el, i) => el.titleType === "h2" && index < i);
+      }
+
+      if (checker(map) && !item.isEmitted) {
         fireEvent(item);
 
         map[index].isEmitted = true;
@@ -80,12 +90,12 @@ function hasTitleTypeH1(target, item) {
       error: item.rule.errorCode,
       location: {
         start: {
-          line: item.start.line,
+          line: item.loc.start.line,
           column: item.start.column
         },
         end: {
-          line: item.end.line,
-          column: item.end.column
+          line: item.loc.end.line,
+          column: item.loc.end.column
         },
       }
     });
