@@ -1,10 +1,12 @@
-import Rule from '../rule-tester/Rule';
+import Rule from '../Rule';
+
 var walk = require( 'estree-walker' ).walk;
+
 import { getContentBlock } from '../utils';
 import { getModValueByType } from '../utils';
 
 function triggerFn(node, parent, prop) {
-  if (!node.children) {
+  if (node.type === "Property") {
     if ((node.key.value === "block" && node.value.value === "warning")) {
       const { children } = parent;
       const contentBlock = getContentBlock(children);
@@ -20,7 +22,7 @@ function triggerFn(node, parent, prop) {
   return false;
 }
 
-function lintFn(block, parent) {
+function lintFn(block, cb, commitFn) {
   let error = null;
   const ModSet = new Set();
   
@@ -32,18 +34,12 @@ function lintFn(block, parent) {
           ModSet.add(nodeModValue);
   
           if (ModSet.size > 1) {
-            error = true;
+            cb(node.loc, commitFn)
           }
         }
       }
     }
   })
-
-  if (error) {
-    return block.loc;
-  }
-
-  return false
 }
 
 const ruleConfig = {

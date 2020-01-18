@@ -1,12 +1,21 @@
-import Rule from '../rule-tester/Rule';
+import Rule from '../Rule';
 
-function triggerFn() {
+import { getModValueByType } from "../utils";
 
+function triggerFn(node, parent, prop) {
+
+  if (node.type === "Property" && node.value.value === "text") {
+    const textTypeMod = getModValueByType(parent, "type");
+    if (textTypeMod === "h1") {
+
+      return { node: parent, titleType: textTypeMod };
+    }
+  }
   return false;
 }
 
-function lintFn() {
-
+function lintFn(block, cb, commitFn) {
+  cb(block, commitFn);
 }
 
 const ruleConfig = {

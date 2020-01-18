@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "parcel test/index.html"
+    "test": "parcel test/index.html",
+    "build": "parcel build ./src/linter.js --out-dir build"
   },
   "author": "Popov Egor",
   "license": "ISC",

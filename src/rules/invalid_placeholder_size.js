@@ -3,6 +3,7 @@ import Rule from '../Rule';
 var walk = require("estree-walker").walk;
 
 import { getContentBlock } from "../utils";
+import { getModValueByType } from "../utils";
 
 function triggerFn(node, parent, prop) {
   if (node.type === "Property") {
@@ -21,17 +22,17 @@ function triggerFn(node, parent, prop) {
 }
 
 function lintFn(block, cb, commitFn) {
-  let placeholderIsFirst = false;
+  const correctSizes = ['s', 'm', 'l'];
 
-   
   walk(block, {
     enter: function(node, parent, prop) {
       if (node.type === "Property" && node.value.value === "placeholder") {
-        placeholderIsFirst = true;
-      }
-      if (node.type === "Property" && node.value.value === "button") {
-        if (!placeholderIsFirst) {
-          cb(node.loc,commitFn)
+        let nodeModValue = getModValueByType(parent, "size");
+        
+        const isCorrectSize = correctSizes.some(size => nodeModValue === size);
+        
+        if (!isCorrectSize) {
+          cb(parent.loc, commitFn);
         }
       }
     }
@@ -39,8 +40,8 @@ function lintFn(block, cb, commitFn) {
 }
 
 const ruleConfig = {
-  code: "WARNING.INVALID_BUTTON_POSITION",
-  error: "Блок button в блоке warning не может находиться перед блоком placeholder на том же или более глубоком уровне вложенности",
+  code: "WARNING.INVALID_PLACEHOLDER_SIZE",
+  error: "Допустимые размеры для блока placeholder в блоке warning (значение модификатора size): s, m, l",
   triggerFn,
   lintFn
 }

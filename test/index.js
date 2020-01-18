@@ -3,28 +3,37 @@ const testJSON = `{
   "block": "page",
   "content": [
     {
-      "block": "warning",
+      "block": "grid",
+      "mods": {
+        "m-columns": "10"
+      },
       "content": [
         {
-          "block": "text",
-          "mods": { "size": "l" },
+          "block": "grid",
+          "elem": "fraction",
+          "elemMods": {
+            "m-col": "2"
+          },
           "content": [
             {
-              "block": "text",
-              "mods": { "size": "m" }
+              "block": "payment"
             }
           ]
         },
         {
-          "block": "button",
-          "mods": { "size": "l" }
-        },
-        {
-          "block": "button",
-          "mods": { "size": "l" }
+          "block": "grid",
+          "elem": "fraction",
+          "elemMods": {
+            "m-col": "5"
+          },
+          "content": [
+            {
+              "block": "offer"
+            }
+          ]
         }
       ]
-    } 
+    }
   ]
 }`;
 

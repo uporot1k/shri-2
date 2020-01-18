@@ -1,6 +1,7 @@
-import Rule from "../rule-tester/Rule";
+import Rule from '../Rule';
+
 var walk = require("estree-walker").walk;
-import { getContentBlock } from "../utils";
+
 import { getModValueByType } from "../utils";
 
 function triggerFn(node, parent, prop) {
@@ -9,24 +10,28 @@ function triggerFn(node, parent, prop) {
     textBlock: null,
     buttons: []
   };
-  if (!node.children) {
+  if (node.type === "Property") {
     if (node.key.value === "block" && node.value.value === "warning") {
       obj.parent = parent;
 
       walk(parent, {
         enter: function(n, p, pr) {
-
-            console.log(n, pr)
-            if (n.type === "Property" && n.key.value === "block" && n.value.value === "button") {
-              
-              obj.buttons.push(p);
+          if (
+            n.type === "Property" &&
+            n.key.value === "block" &&
+            n.value.value === "button"
+          ) {
+            obj.buttons.push(p);
+          }
+          if (
+            n.type === "Property" &&
+            n.key.value === "block" &&
+            n.value.value === "text"
+          ) {
+            if (!obj.textBlock) {
+              obj.textBlock = p;
             }
-            if (n.type === "Property" && n.key.value === "block" && n.value.value === "text") {
-              if(!obj.textBlock) {
-                obj.textBlock = p;
-              }
-              
-            }
+          }
         }
       });
     }
@@ -39,9 +44,9 @@ function triggerFn(node, parent, prop) {
   return false;
 }
 
-function lintFn(obj) {
+function lintFn(obj, cb, commitFn) {
   const { parent, textBlock, buttons } = obj;
-  
+
   const getSizeReference = block => {
     let size = null;
 
@@ -51,9 +56,8 @@ function lintFn(obj) {
 
     return size;
   };
-  
-  let error = [];
 
+  let error = [];
   const SizesMap = ["s", "m", "l", "xl", "xxl"];
 
   const sizeReference = getSizeReference(textBlock);
@@ -61,28 +65,21 @@ function lintFn(obj) {
     walk(el, {
       enter: function(node, parent, prop) {
         if (node.type === "Property" && node.value.value === "button") {
-          if (!error) {
+          if (error.length == 0) {
             let nodeModValue = getModValueByType(parent, "size");
             let sizeIndex = SizesMap.findIndex(size => size === nodeModValue);
             let sizeReferenceIndex = SizesMap.findIndex(
               size => size === sizeReference
             );
-  
+
             if (sizeIndex - 1 !== sizeReferenceIndex) {
-              error.push(block.loc);
+              cb(node.loc, commitFn);
             }
           }
         }
       }
     });
   });
-
-
-  if (error.length > 0) {
-    return block.loc;
-  }
-
-  return false;
 }
 
 const ruleConfig = {

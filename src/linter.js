@@ -1,5 +1,5 @@
-import parser from "./parser";
-import Validator from "./validator";
+import parser from "./Parser";
+import Validator from "./Validator";
 
 
 function lint(input) {
