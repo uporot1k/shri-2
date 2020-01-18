@@ -1,4 +1,3 @@
-import lint from "../src/linter";
 const testJSON = `{
   "block": "page",
   "content": [
@@ -24,7 +23,7 @@ const testJSON = `{
           "block": "grid",
           "elem": "fraction",
           "elemMods": {
-            "m-col": "5"
+            "m-col": "6"
           },
           "content": [
             {

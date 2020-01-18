@@ -1,5 +1,5 @@
-import parser from "./Parser";
-import Validator from "./Validator";
+import parser from "./parser";
+import Validator from "./validator";
 
 
 function lint(input) {
@@ -12,5 +12,7 @@ function lint(input) {
 
   return validator.report();
 }
+
+globalThis.lint = lint;
 
 export default lint;

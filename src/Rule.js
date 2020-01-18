@@ -18,8 +18,14 @@ class Rule {
       code: this.code,
       error: this.errorCode,
       location: {
-        start: loc.start,
-        end: loc.end,
+        start: {
+          line: loc.start.line,
+          column: loc.start.column
+        },
+        end: {
+          line: loc.end.line,
+          column: loc.end.column
+        },
       }
     };
 
