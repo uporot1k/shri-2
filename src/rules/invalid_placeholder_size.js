@@ -6,18 +6,29 @@ import { getContentBlock } from "../utils";
 import { getModValueByType } from "../utils";
 
 function triggerFn(node, parent, prop) {
-  if (node.type === "Property") {
-    if ((node.key.value === "block" && node.value.value === "warning")) {
-      const { children } = parent;
-      const contentBlock = getContentBlock(children);
-      const contentBlockChildren = contentBlock.children;
-      const blockIndex = contentBlockChildren.findIndex((child) => child.children[0].value.value === 'placeholder');
-      if (blockIndex >= 0) {
-        return parent;
+  let triggObj = null;
+  if (
+    node.type === "Property" &&
+    node.key.value === "block" &&
+    node.value.value === "warning"
+  ) {
+    walk(parent, {
+      enter: function(n, p, pr) {
+        if (
+          n.type === "Property" &&
+          n.key.value === "block" &&
+          n.value.value === "placeholder" &&
+          !triggObj
+        ) {
+          triggObj = true;
+        }
       }
-    }
+    });
+    
   }
-  
+  if (triggObj) {
+    return parent;
+  }
   return false;
 }
 

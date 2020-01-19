@@ -1,4 +1,4 @@
-import Rule from '../Rule';
+import Rule from "../Rule";
 
 var walk = require("estree-walker").walk;
 
@@ -10,37 +10,14 @@ function isMarketingBlock(name) {
   return marketingBlockArr.includes(name);
 }
 
-function isCorrectMarketingBlockSize(block, size) {
-  let error = null;
-  let elementSize = null;
-  walk(block, {
-    enter: function(node, parent, prop) {
-      if (node.type === "Property" && node.key.value === "elem" && node.value.value === "fraction") {
-        walk(parent, {
-          enter: function(n, p, pr) {
-            if (n.type === "Property" && isMarketingBlock(n.value.value)) {
-              elementSize = getModValueByType(parent, "m-col");
-  
-              if ((elementSize * 2) > size) {
-                error = true;
-              }
-            }
-          }
-        })
-      }
-    }
-  }); 
-
-  return error ? false : true;
-}
-
 function triggerFn(node, parent, prop) {
   let block = null;
 
   if (
     node.type === "Property" &&
     node.key.value === "block" &&
-    node.value.value === "grid"
+    node.value.value === "grid" &&
+    parent.children[1].value.value !== "fraction"
   ) {
     walk(parent, {
       enter: function(n, p, pr) {
@@ -64,18 +41,39 @@ function triggerFn(node, parent, prop) {
 function lintFn(block, сb, commitFn) {
   let error = false;
   let columnsCount = getModValueByType(block, "m-columns");
+  let elementSize = null;
+  let marketingBlock = null;
+
   walk(block, {
     enter: function(node, parent, prop) {
-      if (node.type === "Object" && !isCorrectMarketingBlockSize(node, columnsCount)) {
-        error = true;
+      if (
+        node.type === "Property" &&
+        node.key.value === "elem" &&
+        node.value.value === "fraction"
+      ) {
+        walk(parent, {
+          enter: function(n, p, pr) {
+            if (n.type === "Property" && isMarketingBlock(n.value.value)) {
+              if (!marketingBlock) {
+                elementSize = getModValueByType(parent, "m-col");
+                marketingBlock = p;
+
+                if (elementSize * 2 > columnsCount) {
+                  error = true;
+                }
+              } else {
+                error = true;
+              }
+            }
+          }
+        });
       }
     }
-  }); 
+  });
 
-  if(error) {
+  if (error) {
     сb(block.loc, commitFn);
   }
-
 }
 
 const ruleConfig = {

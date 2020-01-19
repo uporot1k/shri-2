@@ -1,4 +1,4 @@
-// import lint from '../src/linter'
+import lint from '../src/linter'
 
 const testJSON = `{
   "block": "page",

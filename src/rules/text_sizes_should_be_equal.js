@@ -1,45 +1,58 @@
-import Rule from '../Rule';
+import Rule from "../Rule";
 
-var walk = require( 'estree-walker' ).walk;
+var walk = require("estree-walker").walk;
 
-import { getContentBlock } from '../utils';
-import { getModValueByType } from '../utils';
+import { getContentBlock } from "../utils";
+import { getModValueByType } from "../utils";
 
 function triggerFn(node, parent, prop) {
-  if (node.type === "Property") {
-    if ((node.key.value === "block" && node.value.value === "warning")) {
-      const { children } = parent;
-      const contentBlock = getContentBlock(children);
-      const contentBlockChildren = contentBlock.children;
-      const textBlockIndex = contentBlockChildren.findIndex((child) => child.children[0].value.value === 'text');
+  let triggObj = null;
 
-      if (textBlockIndex >= 0) {
-        return parent;
+  if (
+    node.type === "Property" &&
+    node.key.value === "block" &&
+    node.value.value === "warning"
+  ) {
+    walk(parent, {
+      enter: function(n, p, pr) {
+        if (
+          n.type === "Property" &&
+          n.key.value === "block" &&
+          n.value.value === "text"
+        ) {
+          triggObj = parent;
+        }
       }
-    }
+    });
   }
-  
+
+  if (triggObj) {
+    return triggObj;
+  }
+
   return false;
 }
 
 function lintFn(block, cb, commitFn) {
   let error = null;
   const ModSet = new Set();
-  
+
   walk(block, {
     enter: function(node, parent, prop) {
-      if (node.type === "Property" && node.value.value === "text") {
-        if(!error) {
-          let nodeModValue = getModValueByType(parent, "size");
-          ModSet.add(nodeModValue);
-  
-          if (ModSet.size > 1) {
-            cb(node.loc, commitFn)
-          }
+      if (node.type === "Property" && node.value.value === "text" && !error) {
+        let nodeModValue = getModValueByType(parent, "size");
+        ModSet.add(nodeModValue);
+
+        if (ModSet.size > 1) {
+          error = true;
         }
       }
     }
-  })
+  });
+
+  if (error) {
+    cb(block.loc, commitFn);
+  }
 }
 
 const ruleConfig = {
@@ -47,7 +60,7 @@ const ruleConfig = {
   error: "Все текста должны быть эталонного размера",
   triggerFn,
   lintFn
-}
+};
 
 const rule = new Rule(ruleConfig);
 
