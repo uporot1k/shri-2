@@ -10,18 +10,10 @@
   "author": "Popov Egor",
   "license": "ISC",
   "dependencies": {
-    "@babel/parser": "^7.7.7",
-    "@babel/traverse": "^7.7.4",
-    "acorn": "^7.1.0",
-    "estraverse": "^4.3.0",
     "estree-walker": "^1.0.0",
-    "lodash": "^4.17.15",
     "parcel-bundler": "^1.12.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.7",
-    "@babel/plugin-proposal-json-strings": "^7.7.4",
-    "@babel/plugin-syntax-json-strings": "^7.7.4",
     "json-to-ast": "^2.1.0"
   }
 }

@@ -81,59 +81,10 @@ function chechStructure(arr) {
 
   return map;
 }
-function hasTitleTypeH1(target, item) {
-  const index = target.findIndex(el => item.type === el.type);
-  // debugger
-  if (index >= 0) {
-    item.f({
-      code: item.rule.code,
-      error: item.rule.errorCode,
-      location: {
-        start: {
-          line: item.loc.start.line,
-          column: item.start.column
-        },
-        end: {
-          line: item.loc.end.line,
-          column: item.loc.end.column
-        },
-      }
-    });
 
-    item.isEmitted = true;
-
-    return item;
-  }
-}
-
-function getInstruction(target, item) {
-  const type = getModValueByType(item, "type");
-
-  let instruction = null;
-
-  switch (type) {
-    case "h1":
-      instruction = () => hasTitleTypeH1(target, item);
-      break;
-    case "h2":
-      instruction = () => isRightPosition(target, item);
-      break;
-    case "h3":
-      instruction = () => isRightPosition(target, item);
-      break;
-
-    default:
-      false;
-  }
-
-  return instruction;
-}
 
 function triggerFn(node, parent, prop) {
-  const isTitleType = type => {
-    return ["h1", "h2", "h3"].includes(type);
-  };
-
+ 
   if (!parent) {
     return { node };
   }

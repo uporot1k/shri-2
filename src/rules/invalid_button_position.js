@@ -2,7 +2,6 @@ import Rule from "../Rule";
 
 var walk = require("estree-walker").walk;
 
-import { getContentBlock } from "../utils";
 
 function triggerFn(node, parent, prop) {
   let triggObj = null;
